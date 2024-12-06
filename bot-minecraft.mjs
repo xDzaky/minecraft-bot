@@ -1,7 +1,6 @@
 import mineflayer from "mineflayer";
 import chalk from "chalk";
 
-// Konfigurasi bot
 const botArgs = {
     host: 'play.dominationmc.my.id', // Ganti dengan host server Minecraft Anda
     port: 25565,
@@ -12,6 +11,9 @@ class MCBot {
     constructor(name) {
         this.username = name;
         this.password = "ararra12345"; // Ganti dengan password Anda
+        this.reconnectDelay = 5000; // 5 detik untuk reconnect
+        this.maxReconnectAttempts = 10; // Batas reconnect
+        this.currentReconnectAttempts = 0;
         this.initBot();
     }
 
@@ -37,6 +39,7 @@ class MCBot {
     initEvents() {
         this.bot.on('login', async () => {
             this.log(chalk.green("Successfully logged in!"));
+            this.currentReconnectAttempts = 0; // Reset reconnect attempts
         });
 
         this.bot.on('spawn', async () => {
@@ -57,7 +60,11 @@ class MCBot {
 
         this.bot.on('end', (reason) => {
             this.log(chalk.red(`Disconnected: ${reason}`));
-            this.reconnect();
+            if (this.currentReconnectAttempts < this.maxReconnectAttempts) {
+                this.reconnect();
+            } else {
+                this.log(chalk.red("Max reconnect attempts reached. Exiting..."));
+            }
         });
 
         this.bot.on('error', (err) => {
@@ -83,48 +90,27 @@ class MCBot {
         this.log(chalk.yellow("Registering the bot..."));
         this.bot.chat(`/register ${this.password} ${this.password}`);
         await this.delay(3000);
-        this.sendGreeting();
     }
 
     async login() {
         this.log(chalk.green("Logging in the bot..."));
         this.bot.chat(`/login ${this.password}`);
         await this.delay(3000);
-        this.sendGreeting();
-    }
-
-    async sendGreeting() {
-        // Fungsi ini sekarang tidak melakukan apa-apa
-        this.log(chalk.green("Greeting bypassed. No movement or actions performed."));
-    }
-
-    checkHunger() {
-        if (this.bot.food < 20) {
-            const foodItem = this.bot.inventory.items().find(i => i.name.includes('steak'));
-            if (foodItem) {
-                try {
-                    this.bot.equip(foodItem, 'hand');
-                    this.bot.activateItem();
-                    this.log(chalk.green(`Eating ${foodItem.name} to regain hunger.`));
-                } catch (err) {
-                    this.log(chalk.red(`Failed to eat ${foodItem.name}: ${err.message}`));
-                }
-            } else {
-                this.log(chalk.red("No steak found in inventory!"));
-            }
-        }
     }
 
     reconnect() {
-        this.log(chalk.yellow("Reconnecting..."));
+        this.currentReconnectAttempts++;
+        this.log(chalk.yellow(`Reconnecting attempt ${this.currentReconnectAttempts}/${this.maxReconnectAttempts}...`));
         setTimeout(() => {
             try {
-                this.bot.quit();
+                if (this.bot) {
+                    this.bot.quit();
+                }
             } catch (err) {
                 this.log(chalk.red(`Error during quit: ${err.message}`));
             }
             this.initBot();
-        }, 5000);
+        }, this.reconnectDelay);
     }
 }
 
