@@ -52,11 +52,6 @@ class MCBot {
                 await this.register();
             } else if (msgText.toLowerCase().includes("login")) {
                 await this.login();
-            } else if (msgText.toLowerCase().includes("you have to move")) {
-                this.log(chalk.yellow("Detected anti-spam movement restriction, moving bot..."));
-                this.bot.setControlState('forward', true); // Gerakkan bot maju
-                await this.delay(2000); // Tunggu 2 detik
-                this.bot.setControlState('forward', false); // Hentikan gerakan
             }
         });
 
@@ -99,16 +94,8 @@ class MCBot {
     }
 
     async sendGreeting() {
-        // Bot tetap melakukan gerakan untuk menghindari deteksi spam, tapi tidak mengirim pesan
-        this.bot.setControlState('forward', true); // Bergerak maju
-        await this.delay(2000); // Tunggu 2 detik
-        this.bot.setControlState('forward', false); // Berhenti bergerak
-
-        this.log(chalk.green("Greeting skipped. Bot moved to avoid spam detection."));
-
-        await this.delay(20000); // Tunggu 20 detik sebelum mengirimkan perintah berikutnya
-        this.bot.chat("/sit");
-        this.log(chalk.green("Sent command: /sit"));
+        // Fungsi ini sekarang tidak melakukan apa-apa
+        this.log(chalk.green("Greeting bypassed. No movement or actions performed."));
     }
 
     checkHunger() {
