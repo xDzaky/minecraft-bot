@@ -71,10 +71,6 @@ class MCBot {
             this.log(chalk.red(`Error: ${err.message}`));
         });
 
-        this.bot.on('health', () => {
-            this.checkHunger();
-        });
-
         this.bot.on('death', async () => {
             this.log(chalk.red("Bot died, typing /back..."));
             await this.delay(1000);
@@ -115,5 +111,5 @@ class MCBot {
 }
 
 // Membuat bot dengan nama acak
-const botNames = ["Renyyyx", "Burhanny2"];
+const botNames = ["Burhanny2"];
 botNames.forEach(name => new MCBot(name));
