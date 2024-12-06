@@ -3,7 +3,7 @@ import chalk from "chalk";
 
 // Konfigurasi bot
 const botArgs = {
-    host: 'play.dominationmc.my.id',
+    host: 'play.dominationmc.my.id', // Ganti dengan host server Minecraft Anda
     port: 25565,
     version: '1.20.1',
 };
@@ -11,7 +11,7 @@ const botArgs = {
 class MCBot {
     constructor(name) {
         this.username = name;
-        this.password = "ararra12345";
+        this.password = "ararra12345"; // Ganti dengan password Anda
         this.initBot();
     }
 
@@ -68,10 +68,6 @@ class MCBot {
             this.checkHunger();
         });
 
-        this.bot.on('inventory', () => {
-            this.equipDiamondArmor();
-        });
-
         this.bot.on('death', async () => {
             this.log(chalk.red("Bot died, typing /back..."));
             await this.delay(1000);
@@ -93,29 +89,18 @@ class MCBot {
     async login() {
         this.log(chalk.green("Logging in the bot..."));
         this.bot.chat(`/login ${this.password}`);
-        await this.delay(10000);
+        await this.delay(3000);
         this.sendGreeting();
     }
 
-    async equipDiamondArmor() {
-        const armorItems = {
-            head: 'diamond_helmet',
-            torso: 'diamond_chestplate',
-            legs: 'diamond_leggings',
-            feet: 'diamond_boots',
-        };
+    async sendGreeting() {
+        const greetingMessage = "oi!";
+        this.bot.chat(greetingMessage);
+        this.log(chalk.green(`Sent greeting: ${greetingMessage}`));
 
-        for (const [slot, itemName] of Object.entries(armorItems)) {
-            const item = this.bot.inventory.items().find(i => i.name === itemName);
-            if (item) {
-                try {
-                    await this.bot.equip(item, slot);
-                    this.log(chalk.green(`Equipped ${itemName} in ${slot}.`));
-                } catch (err) {
-                    this.log(chalk.red(`Failed to equip ${itemName}: ${err.message}`));
-                }
-            }
-        }
+        await this.delay(20000);
+        this.bot.chat("/sit");
+        this.log(chalk.green("Sent command: /sit"));
     }
 
     checkHunger() {
@@ -148,6 +133,6 @@ class MCBot {
     }
 }
 
-// Membuat dua bot dengan nama acak
-const botNames = [`Renyyyx`, `Burhanny2`];
+// Membuat bot dengan nama acak
+const botNames = ["Renyyyx", "Burhanny2"];
 botNames.forEach(name => new MCBot(name));
