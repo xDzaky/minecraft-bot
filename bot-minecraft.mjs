@@ -99,15 +99,12 @@ class MCBot {
     }
 
     async sendGreeting() {
-        const greetingMessage = "oi!";
-        
-        // Gerakkan bot sebelum mengirim pesan
+        // Bot tetap melakukan gerakan untuk menghindari deteksi spam, tapi tidak mengirim pesan
         this.bot.setControlState('forward', true); // Bergerak maju
         await this.delay(2000); // Tunggu 2 detik
         this.bot.setControlState('forward', false); // Berhenti bergerak
 
-        this.bot.chat(greetingMessage);
-        this.log(chalk.green(`Sent greeting: ${greetingMessage}`));
+        this.log(chalk.green("Greeting skipped. Bot moved to avoid spam detection."));
 
         await this.delay(20000); // Tunggu 20 detik sebelum mengirimkan perintah berikutnya
         this.bot.chat("/sit");
